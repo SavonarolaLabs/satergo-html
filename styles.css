@@ -582,3 +582,373 @@ body {
         padding: 24px 16px;
     }
 }
+
+/* Modal de donación - FIXED */
+.donation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 21, 28, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none; /* FIXED: No mouse events when hidden */
+}
+
+.donation-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    pointer-events: auto; /* FIXED: Allow mouse events when visible */
+}
+
+.donation-modal-content {
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: 40px;
+    max-width: 480px;
+    width: 90%;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.donation-modal.show .donation-modal-content {
+    transform: translateY(0);
+}
+
+.donation-modal-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.donation-modal-header h3 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    margin: 0 0 8px 0;
+}
+
+.donation-modal-header p {
+    font-size: 16px;
+    color: var(--color-text-dark);
+    margin: 0;
+}
+
+.donation-amounts {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    justify-content: center;
+}
+
+.amount-button {
+    background: rgba(55, 57, 66, 0.3);
+    border: 2px solid rgba(55, 57, 66, 0.5);
+    color: var(--color-text);
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    min-width: 80px;
+}
+
+.amount-button:hover {
+    background: rgba(55, 57, 66, 0.5);
+    border-color: rgba(55, 57, 66, 0.7);
+}
+
+.amount-button.selected {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.custom-amount-section {
+    margin-bottom: 32px;
+}
+
+.custom-amount-label {
+    display: block;
+    font-size: 14px;
+    color: var(--color-text-dark);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.custom-amount-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    color: var(--color-text);
+    font-size: 16px;
+    text-align: center;
+}
+
+.custom-amount-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.donation-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.donation-button {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.donation-button:hover {
+    background: var(--color-primary-light);
+}
+
+.donation-button:disabled {
+    background: rgba(55, 57, 66, 0.3);
+    color: rgba(216, 218, 219, 0.5);
+    cursor: not-allowed;
+}
+
+.cancel-button {
+    background: transparent;
+    color: var(--color-text-dark);
+    border: 1px solid var(--color-border);
+    padding: 14px 28px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cancel-button:hover {
+    background: rgba(55, 57, 66, 0.3);
+    color: var(--color-text);
+}
+
+.close-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--color-text-dark);
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.close-button:hover {
+    color: var(--color-text-light);
+}
+
+.donation-status {
+    text-align: center;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: none;
+}
+
+.donation-status.success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.donation-status.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.donation-status.loading {
+    background: rgba(94, 94, 233, 0.1);
+    color: var(--color-primary);
+    border: 1px solid rgba(94, 94, 233, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .donation-modal-content {
+        padding: 24px;
+        margin: 16px;
+    }
+
+    .donation-amounts {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .amount-button {
+        width: 100%;
+    }
+
+    .donation-actions {
+        flex-direction: column;
+    }
+
+    .donation-button,
+    .cancel-button {
+        width: 100%;
+    }
+}
+
+/* Donation Tabs */
+.donation-tabs {
+    display: flex;
+    margin-bottom: 24px;
+    background: var(--color-bg);
+    border-radius: 6px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.donation-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 4px;
+    color: var(--color-text-dark);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.donation-tab.active {
+    background: var(--color-primary);
+    color: white;
+}
+
+.donation-tab:hover:not(.active) {
+    background: rgba(55, 57, 66, 0.3);
+    color: var(--color-text);
+}
+
+.tab-icon {
+    font-size: 12px;
+}
+
+/* Tab Content */
+.donation-tab-content {
+    display: none;
+}
+
+.donation-tab-content.active {
+    display: block;
+}
+
+/* Monero Donation Styles */
+.monero-donation-section {
+    text-align: center;
+}
+
+.monero-info h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-text-light);
+    margin: 0 0 8px 0;
+}
+
+.monero-info p {
+    font-size: 14px;
+    color: var(--color-text-dark);
+    margin: 0 0 24px 0;
+}
+
+.monero-address-container {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 24px;
+}
+
+.monero-address {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 12px;
+    color: var(--color-text-light);
+    background: var(--color-bg-lighter);
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    margin-bottom: 12px;
+    word-break: break-all;
+    line-height: 1.4;
+    user-select: all;
+}
+
+.copy-address-button {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.copy-address-button:hover {
+    background: var(--color-primary-light);
+}
+
+.copy-address-button.copied {
+    background: #22c55e;
+}
+
+.monero-instructions {
+    margin-top: 16px;
+}
+
+.monero-instructions p {
+    font-size: 13px;
+    color: var(--color-text-dark);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Responsive adjustments for tabs */
+@media (max-width: 768px) {
+    .donation-tabs {
+        margin-bottom: 20px;
+    }
+
+    .donation-tab {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .monero-address {
+        font-size: 11px;
+        padding: 10px;
+    }
+}
