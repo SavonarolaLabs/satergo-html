@@ -245,34 +245,65 @@
 
             <!-- ERGO Donation Content -->
             <div id="ergoDonationContent" class="donation-tab-content active">
-                <div class="donation-amounts">
-                    <button class="amount-button selected" data-amount="1">1 ERG</button>
-                    <button class="amount-button" data-amount="5">5 ERG</button>
-                    <button class="amount-button" data-amount="10">10 ERG</button>
+                <!-- Sección principal de donación -->
+                <div class="primary-donation-section">
+                    <div class="donation-amounts">
+                        <button class="amount-button selected" data-amount="1">1 ERG</button>
+                        <button class="amount-button" data-amount="5">5 ERG</button>
+                        <button class="amount-button" data-amount="10">10 ERG</button>
+                    </div>
+
+                    <div class="custom-amount-section">
+                        <label class="custom-amount-label">Or enter custom amount:</label>
+                        <input
+                            type="number"
+                            id="customAmount"
+                            class="custom-amount-input"
+                            placeholder="0.000"
+                            step="0.001"
+                            min="0.001"
+                        >
+                    </div>
+
+                    <div class="donation-actions">
+                        <button class="donation-button" id="donateButton" onclick="processDonation()">
+                            Donate with Nautilus
+                        </button>
+                        <button class="cancel-button" onclick="closeDonationModal()">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <div id="donationStatus" class="donation-status"></div>
                 </div>
 
-                <div class="custom-amount-section">
-                    <label class="custom-amount-label">Or enter custom amount:</label>
-                    <input
-                        type="number"
-                        id="customAmount"
-                        class="custom-amount-input"
-                        placeholder="0.000"
-                        step="0.001"
-                        min="0.001"
-                    >
+                <!-- Separador visual -->
+                <div class="donation-separator">
+                    <div class="separator-line"></div>
+                    <span class="separator-text">or</span>
+                    <div class="separator-line"></div>
                 </div>
 
-                <div class="donation-actions">
-                    <button class="donation-button" id="donateButton" onclick="processDonation()">
-                        Donate with Nautilus
-                    </button>
-                    <button class="cancel-button" onclick="closeDonationModal()">
-                        Cancel
-                    </button>
-                </div>
+                <!-- Sección alternativa (manual) -->
+                <div class="alternative-donation-section">
+                    <div class="alternative-header">
+                        <h4>Send ERG manually</h4>
+                        <p>Copy our donation address for any Ergo wallet:</p>
+                    </div>
 
-                <div id="donationStatus" class="donation-status"></div>
+                    <div class="address-container">
+                        <div class="crypto-address" id="ergoAddress">
+                            9gMnqf29LPxos2Lk5Lt6SkTmbWYL1d5QFHygbf6zRXDgL4KtAho
+                        </div>
+                        <button class="copy-address-button" onclick="copyErgoAddress()">
+                            <span id="ergoCopyButtonText">📋 Copy Address</span>
+                        </button>
+                    </div>
+
+                    <div class="address-instructions">
+                        <p>Send any amount of ERG to this address. Your donation helps improve Satergo!</p>
+                    </div>
+                </div>
             </div>
 
             <!-- MONERO Donation Content -->
