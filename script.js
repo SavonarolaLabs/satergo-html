@@ -1144,38 +1144,137 @@ function switchDonationTab(tabName) {
     }
 }
 
-// Copy Monero address to clipboard
+// Función universal para copiar al portapapeles (funciona en todos los entornos)
+async function copyToClipboard(text) {
+    try {
+        // Método 1: API moderna del portapapeles (HTTPS)
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+
+        // Método 2: Fallback para HTTP y navegadores antiguos
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (!successful) {
+            throw new Error('Fallback copy failed');
+        }
+
+        return true;
+
+    } catch (error) {
+        console.error('Copy failed:', error);
+        return false;
+    }
+}
+
+// Función para copiar dirección ERGO
+async function copyErgoAddress() {
+    const address = document.getElementById('ergoAddress').textContent.trim();
+    const button = document.querySelector('#ergoCopyButtonText').parentElement;
+    const buttonText = document.getElementById('ergoCopyButtonText');
+
+    try {
+        const success = await copyToClipboard(address);
+
+        if (success) {
+            // Animación de éxito
+            button.classList.add('copied');
+            buttonText.innerHTML = '✅ Copied!';
+
+            // Feedback visual adicional
+            showDonationStatus('ERGO address copied to clipboard!', 'success');
+
+            // Restaurar después de 2 segundos
+            setTimeout(() => {
+                button.classList.remove('copied');
+                buttonText.innerHTML = '📋 Copy Address';
+                hideDonationStatus();
+            }, 2000);
+
+        } else {
+            throw new Error('Copy operation failed');
+        }
+
+    } catch (error) {
+        console.error('Failed to copy ERGO address:', error);
+
+        // Mostrar error y seleccionar texto como fallback
+        showDonationStatus('Please select and copy the address manually (Ctrl+C)', 'error');
+
+        // Seleccionar el texto automáticamente
+        const addressElement = document.getElementById('ergoAddress');
+        const range = document.createRange();
+        range.selectNode(addressElement);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+
+        // Highlight visual
+        addressElement.style.background = 'rgba(239, 68, 68, 0.1)';
+        setTimeout(() => {
+            addressElement.style.background = '';
+            hideMoneroStatus();
+        }, 3000);
+    }
+}
+
+// Función mejorada para copiar dirección Monero
 async function copyMoneroAddress() {
     const address = document.getElementById('moneroAddress').textContent.trim();
     const button = document.querySelector('.copy-address-button');
     const buttonText = document.getElementById('copyButtonText');
 
     try {
-        await navigator.clipboard.writeText(address);
+        const success = await copyToClipboard(address);
 
-        // Success feedback
-        button.classList.add('copied');
-        buttonText.textContent = '✅ Address Copied!';
+        if (success) {
+            // Animación de éxito
+            button.classList.add('copied');
+            buttonText.innerHTML = '✅ Copied!';
 
-        // Show success message
-        showMoneroStatus('Monero address copied to clipboard!', 'success');
+            // Feedback visual
+            showMoneroStatus('Monero address copied to clipboard!', 'success');
 
-        // Reset button after 2 seconds
-        setTimeout(() => {
-            button.classList.remove('copied');
-            buttonText.textContent = '📋 Copy Address';
-            hideMoneroStatus();
-        }, 2000);
+            // Restaurar después de 2 segundos
+            setTimeout(() => {
+                button.classList.remove('copied');
+                buttonText.innerHTML = '📋 Copy Address';
+                hideMoneroStatus();
+            }, 2000);
+
+        } else {
+            throw new Error('Copy operation failed');
+        }
 
     } catch (error) {
-        console.error('Failed to copy address:', error);
-        showMoneroStatus('Failed to copy address. Please select and copy manually.', 'error');
+        console.error('Failed to copy Monero address:', error);
 
-        // Fallback: select the text
+        // Mostrar error y seleccionar texto como fallback
+        showMoneroStatus('Please select and copy the address manually (Ctrl+C)', 'error');
+
+        // Seleccionar el texto automáticamente
+        const addressElement = document.getElementById('moneroAddress');
         const range = document.createRange();
-        range.selectNode(document.getElementById('moneroAddress'));
+        range.selectNode(addressElement);
         window.getSelection().removeAllRanges();
         window.getSelection().addRange(range);
+
+        // Highlight visual
+        addressElement.style.background = 'rgba(239, 68, 68, 0.1)';
+        setTimeout(() => {
+            addressElement.style.background = '';
+            hideMoneroStatus();
+        }, 3000);
     }
 }
 
