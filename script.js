@@ -240,8 +240,6 @@ class TypingAnimation {
     }
 }
 
-// Mouse Movement Effects - Disabled to match original
-
 // Feature Image Animations
 class FeatureAnimations {
     constructor() {
@@ -268,13 +266,155 @@ class FeatureAnimations {
     }
 }
 
-// Initialize all animations when DOM is loaded
+// Donation Modal System
+class DonationModal {
+    constructor() {
+        this.modal = null;
+        this.init();
+    }
+
+    init() {
+        this.modal = document.getElementById('donationModal');
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.modal.classList.contains('is-visible')) {
+                this.hide();
+            }
+        });
+
+        // Prevent body scroll when modal is open
+        this.modal.addEventListener('transitionend', (e) => {
+            if (e.target === this.modal) {
+                if (this.modal.classList.contains('is-visible')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+        });
+    }
+
+    show() {
+        this.modal.classList.add('is-visible');
+
+        // Trigger reveal animation for modal content
+        requestAnimationFrame(() => {
+            const content = this.modal.querySelector('.donation-modal-content');
+            content.classList.add('is-revealed');
+        });
+    }
+
+    hide() {
+        const content = this.modal.querySelector('.donation-modal-content');
+        content.classList.remove('is-revealed');
+
+        setTimeout(() => {
+            this.modal.classList.remove('is-visible');
+        }, 300);
+    }
+}
+
+// Initialize all systems when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new ScrollAnimations();
     new PlatformIcons();
     new HeaderEffects();
     new FeatureAnimations();
+    window.donationModal = new DonationModal();
 });
+
+// Global Functions for Modal Control
+function showDonationModal() {
+    if (window.donationModal) {
+        window.donationModal.show();
+    }
+}
+
+function hideDonationModal() {
+    if (window.donationModal) {
+        window.donationModal.hide();
+    }
+}
+
+// Copy to Clipboard Functionality
+async function copyToClipboard(elementId, buttonElement) {
+    const addressElement = document.getElementById(elementId);
+    const address = addressElement.textContent;
+
+    try {
+        await navigator.clipboard.writeText(address);
+
+        // Visual feedback
+        const originalText = buttonElement.innerHTML;
+        const originalBackground = buttonElement.style.backgroundColor;
+
+        buttonElement.classList.add('copied');
+        buttonElement.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Copied!
+        `;
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            buttonElement.classList.remove('copied');
+            buttonElement.innerHTML = originalText;
+        }, 2000);
+
+    } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = address;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+
+            // Visual feedback for fallback
+            const originalText = buttonElement.innerHTML;
+            buttonElement.classList.add('copied');
+            buttonElement.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                Copied!
+            `;
+
+            setTimeout(() => {
+                buttonElement.classList.remove('copied');
+                buttonElement.innerHTML = originalText;
+            }, 2000);
+
+        } catch (fallbackErr) {
+            console.error('Failed to copy text: ', fallbackErr);
+
+            // Show error state
+            const originalText = buttonElement.innerHTML;
+            buttonElement.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+                Error
+            `;
+
+            setTimeout(() => {
+                buttonElement.innerHTML = originalText;
+            }, 2000);
+        }
+
+        document.body.removeChild(textArea);
+    }
+}
 
 // Performance optimization: Debounce resize events
 function debounce(func, wait) {
@@ -296,8 +436,3 @@ const handleResize = debounce(() => {
 }, 250);
 
 window.addEventListener('resize', handleResize);
-
-// Donation functionality
-function showDonationInfo() {
-    alert('To support Satergo development, please visit:\nhttps://github.com/Satergo/Satergo\n\nOr contact the team via Telegram for donation information.');
-}
